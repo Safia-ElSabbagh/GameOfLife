@@ -4,30 +4,15 @@
 using namespace std;
 
 class Universe{
-  //  int board[20][20];
 
 public:
-     /*int getBoard() const{
-         for(int i = 0; i<20; ++i){
-             for(int j = 0; j<20; ++j){
-                 return board[i][j];
-             }
-         }
-    }*/
-   /* void setBoard(const int arr[20][20]){
-         for(int i = 0; i<20; ++i){
-             for(int j = 0; j<20; ++j){
-                 board[i][j] = arr[i][j];
-             }
-         }
-     }*/
 
     void initilaize(int(&board)[20][20]) {
        int pos = 1;
        for (int i = 0; i < 20; ++i) {
            for (int j = 0; j < 20; ++j) {
-               board[i][j] = pos +i + j;
-               cout << setw(4) << board[i][j] << ' ';
+               board[i][j] = 0;     // initialize all cells to dead
+               cout << setw(4) << pos +i + j << ' ';
            }
            cout << endl;
            pos += 19;
@@ -36,13 +21,13 @@ public:
 
        while (true) {
            int index;
-           cout << "Enter the position of the cell you want to make it live (from 0 to 399):" << endl;
-           cout << "If you want to exit enter (-1)";
+           cout << "Enter the position of the cell you want to make it live (from 1 to 400):" << endl;
+           cout << "If you want to exit enter (-1):";
            cin >> index;
            cout<< (index -1)/20 << "  " << (index -1)%20 << endl;
 
            if (index == -1) break;
-           else if ((index < 1) || (index > 399)) {
+           else if ((index < 1) || (index > 400)) {
                cerr << " Invalid position (out of bound)!" << endl;
                continue;
            } else {
@@ -50,6 +35,7 @@ public:
                board[((index -1) / 20)][(index -1)% 20] = 1;
            }
        }
+
        for (int i = 0; i < 20; ++i) {
            for (int j = 0; j < 20; ++j){
                if(board[i][j] != 1)
@@ -61,11 +47,11 @@ public:
    }
 
    void Reset(int(&board)[20][20]) {
-       int pos;
+       int pos = 1;
        for (int i = 0; i < 20; ++i) {
            for (int j = 0; j < 20; ++j) {
-               board[i][j] = pos + i + j;
-               cout << setw(4) << board[i][j] << ' ';
+               board[i][j] = 0;
+               cout << setw(4) << pos +i + j << ' ';
            }
            cout << endl;
            pos += 19;
@@ -95,18 +81,68 @@ public:
 
    }
 
+    void next_generation(int board[20][20]){
+        int temp_board[20][20];
+        for (int i = 0; i < 20; ++i) {
+            for (int j = 0; j < 20; ++j) {
+                temp_board[i][j] = board[i][j];
+            }
+        }
 
+        for(int i = 0; i < 20; ++i){
+            for(int j = 0; j < 20; ++j){
+                int neighbours = count_neighbours(temp_board,i,j);
+                if(neighbours <= 1)
+                    board[i][j] = 0;
+                else if (neighbours >= 4)
+                    board[i][j] = 0;
+                else if (temp_board[i][j] == 1 && (neighbours == 2 || neighbours == 3))
+                    board[i][j] = 1;
+                else if (temp_board[i][j] == 0 &&  neighbours == 3)
+                    board[i][j] = 1;
+
+            }
+        }
+    }
+
+    void display(int board[20][20]){
+        // Clear the console
+        system("cls");
+
+        for(int i = 0; i < 20; ++i){
+            for(int j= 0; j < 20; ++j){
+                if(board[i][j] == 1)
+                cout << setw(4) << '*' << ' ';
+                else
+                    cout << setw(4) << ' ' << ' ';
+
+
+            }
+            cout<< endl;
+        }
+    }
+
+    void run(int board[20][20]){
+        int num;
+        cout<< "Enter number of generations:";
+        cin>> num;
+        while(num > 0){
+            next_generation(board);
+            display(board);
+            num--;
+        }
+    }
 
 };
 
 
 int main() {
-    int board[20][20];
+    int board[20][20] = {0};
 
     Universe u;
 
     u.initilaize(board);
-    u.count_neighbours(board,2,4);
+    u.run(board);
 
     return 0;
 }
