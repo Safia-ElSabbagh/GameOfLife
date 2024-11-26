@@ -72,14 +72,29 @@ public:
        }
    }
 
-   int count_neighbours() {
+   int count_neighbours(int board[20][20],int row, int col) {
        int count = 0;
-       for (int i = 0; i < 20; ++i) {
-           for (int j = 0; j < 20; ++j) {
+       // the neighbour cells to check
+       int cellsToCheck[8][2] = {{-1,-1}, {-1,0}, {-1,1}, {0,-1},
+                               {0,1}, {1,-1}, {1,0}, {1,1}};
 
+        // check each surrounding cell
+       for (auto& cell : cellsToCheck) {
+           int newRow = row + cell[0];
+           int newCol = col + cell[1];
+
+           if (newRow >= 0 && newRow < 20 && newCol >= 0 && newCol < 20) {
+               //Valid cells only
+               if(board[newRow][newCol] == 1)
+                   count++;
            }
+
        }
+
+       return count;
+
    }
+
 
 
 };
@@ -91,6 +106,7 @@ int main() {
     Universe u;
 
     u.initilaize(board);
+    u.count_neighbours(board,2,4);
 
     return 0;
 }
